@@ -1,0 +1,68 @@
+
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+
+
+@SuppressWarnings("serial")
+
+public class gameGUI extends JFrame implements ActionListener{
+	
+	private JMenuBar topMenu;
+	private JMenu gameMenu, helpMenu;
+	private JMenuItem gReset, gExit, hHelp, hAbout;
+	
+	public gameGUI(){
+		
+		super("Sliding Block Puzzles");
+		setSize(500,350);
+		
+		topMenu = new JMenuBar();
+		setJMenuBar(topMenu);
+		
+		gameMenu = new JMenu("Game");
+		topMenu.add(gameMenu);
+		
+		helpMenu = new JMenu("Help");
+		topMenu.add(helpMenu);
+		
+		gReset = new JMenuItem("Reset");
+		gameMenu.add(gReset);
+		gReset.setMnemonic(KeyEvent.VK_R);
+		gReset.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_R, ActionEvent.ALT_MASK));
+		gReset.addActionListener(this);
+		gameMenu.addSeparator();
+		
+		gExit = new JMenuItem("Exit");
+		gameMenu.add(gExit);
+		gExit.setMnemonic(KeyEvent.VK_E);
+		gExit.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_E, ActionEvent.ALT_MASK));
+		gExit.addActionListener(this);
+		gameMenu.addSeparator();
+		
+		
+		
+		
+		
+		
+		setVisible(true);
+		
+	}
+
+	
+	
+	
+	
+	
+	public void actionPerformed(ActionEvent e) {
+		
+		
+	}
+	
+	
+	
+	
+}

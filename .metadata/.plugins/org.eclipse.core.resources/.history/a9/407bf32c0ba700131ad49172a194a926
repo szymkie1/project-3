@@ -1,0 +1,119 @@
+
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+
+
+@SuppressWarnings("serial")
+
+public class gameGUI extends JFrame implements ActionListener{
+	
+	private JMenuBar topMenu;
+	private JMenu gameMenu, helpMenu;
+	private JMenuItem gReset, gExit, hHelp, hAbout;
+	private JPanel gameBoard;
+	private JPanel infoPanel;
+	private JPanel uiPanel;
+	private JLabel bScoreLabel, bestScore, moveLabel, moves;
+	private JButton hint, reset;
+	
+	public gameGUI(){
+		
+		super("Sliding Block Puzzles");
+		setSize(500,350);
+		
+		topMenu = new JMenuBar();
+		setJMenuBar(topMenu);
+		
+		gameMenu = new JMenu("Game");
+		topMenu.add(gameMenu);
+		
+		helpMenu = new JMenu("Help");
+		topMenu.add(helpMenu);
+		
+		gReset = new JMenuItem("Reset");
+		gameMenu.add(gReset);
+		gReset.setMnemonic(KeyEvent.VK_R);
+		gReset.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_R, ActionEvent.ALT_MASK));
+		gReset.addActionListener(this);
+		gameMenu.addSeparator();
+		
+		gExit = new JMenuItem("Exit");
+		gameMenu.add(gExit);
+		gExit.setMnemonic(KeyEvent.VK_E);
+		gExit.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_E, ActionEvent.ALT_MASK));
+		gExit.addActionListener(this);
+		
+		
+		hHelp = new JMenuItem("Help");
+		helpMenu.add(hHelp);
+		hHelp.setMnemonic(KeyEvent.VK_H);
+		hHelp.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_H, ActionEvent.ALT_MASK));
+		hHelp.addActionListener(this);
+		helpMenu.addSeparator();
+		
+		hAbout = new JMenuItem("About");
+		helpMenu.add(hAbout);
+		hAbout.setMnemonic(KeyEvent.VK_A);
+		hAbout.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_A, ActionEvent.ALT_MASK));
+		hAbout.addActionListener(this);
+		
+		gameBoard = new JPanel();
+		infoPanel = new JPanel();
+		
+		uiPanel = new JPanel();
+		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.Y_AXIS));
+		
+		moveLabel = new JLabel("Move: ");
+		infoPanel.add(moveLabel);
+		moves = new JLabel("0");
+		infoPanel.add(moves);
+		
+		hint = new JButton("Hint");
+		infoPanel.add(hint);
+		
+		reset = new JButton("Reset");
+		infoPanel.add(reset);
+		
+		bScoreLabel = new JLabel("Best Score: ");
+		infoPanel.add(bScoreLabel);
+		bestScore = new JLabel("0");
+		infoPanel.add(bestScore);
+		
+		uiPanel.add(infoPanel);
+		uiPanel.add(gameBoard);
+		
+		add(uiPanel);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		setVisible(true);
+		
+	}
+
+	
+	
+	
+	
+	
+	public void actionPerformed(ActionEvent e) {
+		
+		
+	}
+	
+	
+	
+	
+}
