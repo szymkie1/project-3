@@ -3,6 +3,9 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 
 @SuppressWarnings("serial")
@@ -17,10 +20,24 @@ public class gameGUI extends JFrame implements ActionListener{
 	private JPanel uiPanel;
 	private JLabel bScoreLabel, bestScore, moveLabel, moves;
 	private JButton hint, reset;
+	private level[] gameLevels = new level[12];
 	
 	public gameGUI(){
 		
+		
+		
 		super("Sliding Block Puzzles");
+		
+		File[] fileArray = fileSetup.setFiles();
+		
+		
+		for(int numFiles = 0; numFiles < 12; numFiles++){
+			gameLevels[numFiles] = new level();
+			gameLevels[numFiles].initLevel(fileArray[numFiles]);
+		}
+		
+		
+		
 		setSize(500,350);
 		
 		topMenu = new JMenuBar();
@@ -138,7 +155,40 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 	}
 	
+}
+
+class fileSetup{
 	
-	
+	public static File[] setFiles(){
+		
+		File[] fileArray;
+		
+		fileArray = new File[12];
+		
+		fileArray[0] = new File("src/level1.data");
+		fileArray[1] = new File("src/level2.data");
+		fileArray[2] = new File("src/level3.data");
+		fileArray[3] = new File("src/level4.data");
+		fileArray[4] = new File("src/level5.data");
+		fileArray[5] = new File("src/level6.data");
+		fileArray[6] = new File("src/level7.data");
+		fileArray[7] = new File("src/level8.data");
+		fileArray[8] = new File("src/level9.data");
+		fileArray[9] = new File("src/level10.data");
+		fileArray[10] = new File("src/level11.data");
+		fileArray[11] = new File("src/level12.data");
+		
+		for(int fileCount=0; fileCount < 12; fileCount++){
+		try(FileInputStream fis = new FileInputStream(fileArray[fileCount])){
+			System.out.println("Successful read");
+			}
+		catch(IOException e){
+			System.out.println(e);
+			System.exit(0);
+		}
+		}
+		
+		return fileArray;
+	}
 	
 }
