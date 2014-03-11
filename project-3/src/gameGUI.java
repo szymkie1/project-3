@@ -6,6 +6,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 @SuppressWarnings("serial")
@@ -31,10 +32,30 @@ public class gameGUI extends JFrame implements ActionListener{
 		File[] fileArray = fileSetup.setFiles();
 		
 		
+		
+		
 		for(int numFiles = 0; numFiles < 12; numFiles++){
 			gameLevels[numFiles] = new level();
 			gameLevels[numFiles].initLevel(fileArray[numFiles]);
 		}
+		
+		ArrayList<block> blocks= new ArrayList<block>();
+		blocks = gameLevels[0].getButtons();
+		System.out.println(blocks.get(0).getRow());
+		System.out.println(blocks.get(0).getColumn());
+		System.out.println(blocks.get(0).getWidth());
+		System.out.println(blocks.get(0).getHeight());
+		System.out.println(blocks.get(0).getDirection());
+		
+		
+		
+		
+		
+		
+		
+	
+		
+		
 		
 		
 		

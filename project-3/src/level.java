@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class level{
@@ -13,6 +14,7 @@ public class level{
 	private int rows=0;
 	private int columns=0;
 	private char[][] inputArray;
+	public ArrayList<block> blocks = new ArrayList<block>();
 	
 	
 	
@@ -87,6 +89,26 @@ public class level{
 	
 	public char[][] getInputArray(){
 		return inputArray;
+	}
+	
+	public ArrayList<block> getButtons(){
+		
+		
+		for(int i=1; i < numLines; i++){
+			
+			block temp = new block();
+			temp.setRow(Character.getNumericValue(inputArray[i][0]));
+			temp.setColumn(Character.getNumericValue(inputArray[i][3]));
+			temp.setWidth(Character.getNumericValue(inputArray[i][6]));
+			temp.setHeight(Character.getNumericValue(inputArray[i][9]));
+			temp.setDirection(inputArray[i][12]);
+			blocks.add(temp);
+			
+		  }
+		
+		
+		
+		return blocks;
 	}
 	
 	
