@@ -17,13 +17,12 @@ public class gameGUI extends JFrame implements ActionListener{
 	private JMenuBar topMenu;
 	private JMenu gameMenu, helpMenu;
 	private JMenuItem gReset, gExit, hHelp, hAbout;
-	private JPanel gameBoard;
-	private JPanel infoPanel;
-	private JPanel uiPanel;
+	
+	
 	private JLabel bScoreLabel, bestScore, moveLabel, moves;
 	private JButton hint, reset, solve;
 	private level[] gameLevels = new level[12];
-	private button[][] gameButtons = new button[10][10];
+	private button gameButtons[][] = new button[6][6];
 	
 	public gameGUI(){
 		
@@ -31,10 +30,12 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 		super("Sliding Block Puzzles");
 		
+		setSize(500,350);
+		
 		File[] fileArray = fileSetup.setFiles();
 		
-		char[][] arrayL = null;
 		
+		arrayContainer[] dispArrays = new arrayContainer[12];
 		
 		
 		
@@ -42,10 +43,9 @@ public class gameGUI extends JFrame implements ActionListener{
 			gameLevels[numFiles] = new level();
 			gameLevels[numFiles].initLevel(fileArray[numFiles]);
 			gameLevels[numFiles].getBlocks();
-			arrayL = new char[6][6];
-			arrayL=gameLevels[numFiles].getArrayWithBlocks();
-			
-
+			char[][] arrayTemp=gameLevels[numFiles].getArrayWithBlocks();
+			dispArrays[numFiles] = new arrayContainer();
+			dispArrays[numFiles].setArray(arrayTemp);
 			
 			}
 		
@@ -85,7 +85,7 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 		
 		
-		setSize(500,350);
+		
 		
 		topMenu = new JMenuBar();
 		setJMenuBar(topMenu);
@@ -127,12 +127,23 @@ public class gameGUI extends JFrame implements ActionListener{
                 KeyEvent.VK_A, ActionEvent.ALT_MASK));
 		hAbout.addActionListener(this);
 		
-		gameBoard = new JPanel(new GridLayout(6,6));
+		board[] panels = new board[12];
 		
-		infoPanel = new JPanel();
+		panels[0] = new board();
 		
-		uiPanel = new JPanel();
+		panels[0].setLayout(new GridLayout(6,6));
+		
+		
+		
+		
+		JPanel infoPanel = new JPanel();
+		
+		JPanel uiPanel = new JPanel();
 		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.Y_AXIS));
+		
+		
+		
+		
 		
 		moveLabel = new JLabel("Move: ");
 		infoPanel.add(moveLabel);
@@ -154,14 +165,20 @@ public class gameGUI extends JFrame implements ActionListener{
 		infoPanel.add(bestScore);
 		
 		
-		for (int i = 0; i < 10; i++) {
-			for (int j = 0; j < 10; j++) {
+		char[][] convArray=dispArrays[0].getArray();
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
 				gameButtons[i][j] = new button();
-				gameButtons[i][j].setPreferredSize(new Dimension(20, 20));
-				gameBoard.add(gameButtons[i][j]);
+				
+				panels[0].add(gameButtons[i][j]);
 				gameButtons[i][j].setX(i);
 				gameButtons[i][j].setY(j);
-				gameButtons[i][j].setVisible(true);
+				gameButtons[i][j].setText(Character.toString(convArray[i][j]));
+				
+				
+				
+				
+				
 			}
 		}
 		
@@ -169,8 +186,11 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 		
 		
+		
+		
+		
 		uiPanel.add(infoPanel);
-		uiPanel.add(gameBoard);
+		uiPanel.add(panels[0]);
 		
 		
 		add(uiPanel);
@@ -182,10 +202,44 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 		
 		
-		pack();
+		
 		
 		setVisible(true);
 		
+	}
+	
+	
+	public int LetterToBlock(char a){
+		int num=-1;
+		if(a=='Z'){
+			num=0;
+		}
+		else if(a=='A'){
+			num=1;
+		}
+		else if(a=='B'){
+			num=2;
+		}
+		else if(a=='C'){
+			num=3;
+		}
+		else if(a=='D'){
+			num=4;
+		}
+		else if(a=='E'){
+			num=5;
+		}
+		else if(a=='F'){
+			num=6;
+		}
+		else if(a=='G'){
+			num=7;
+		}
+		else{
+			System.out.println("Problem Converting");
+		}
+		
+		return num;
 	}
 
 	

@@ -1,29 +1,19 @@
 
-public class board{
+import java.awt.*;
+import java.awt.event.*;
+
+import javax.swing.*;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import javax.swing.border.*;
+
+@SuppressWarnings("serial")
+public class board extends JPanel{
 	
-	public button[][] buttons = new button[6][6];
-	
-	public void setBoard(char[][] arrayBoard){
-		
-		for(int a=0; a < 6; a++){
-			for(int b=0; b < 6; b++){
-				
-				buttons[a][b] = new button();
-				buttons[a][b].setX(a);
-				buttons[a][b].setY(b);
-				buttons[a][b].setLetter(arrayBoard[a][b]);
-				
-			}
-		}
-		
-		
-		
-	}
-	
-	public button[][] getBoard(){
-		
-		return buttons;
-	}
 	
 	
 }
