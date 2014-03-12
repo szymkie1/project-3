@@ -343,7 +343,7 @@ class buttonListener implements MouseListener{
 			button currButton1 = (button)currEvents[0].getSource();
 			button currButton2 = (button)currEvents[1].getSource();
 			
-			if(currButton2.getBlock() != -1){
+			if(currButton2.getLetter() != '.'){
 			System.out.println("You can't move a block if another block is in that location");	
 			}
 			

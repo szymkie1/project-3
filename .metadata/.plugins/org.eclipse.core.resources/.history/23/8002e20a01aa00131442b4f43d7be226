@@ -342,14 +342,13 @@ class buttonListener implements MouseListener{
 			currEvents=mouseEvents.getTwoEvents();
 			button currButton1 = (button)currEvents[0].getSource();
 			button currButton2 = (button)currEvents[1].getSource();
-			
-			if(currButton2.getBlock() != -1){
-			System.out.println("You can't move a block if another block is in that location");	
-			}
+			System.out.println(currButton1.getBlock());
+			System.out.println(currButton2.getBlock());
 			
 		}
 		
-		
+		System.out.println("Button 1: "+buttonArray[0][0].getX());
+		System.out.println("Last Button: "+buttonArray[5][5].getX());
 		
 		
 		

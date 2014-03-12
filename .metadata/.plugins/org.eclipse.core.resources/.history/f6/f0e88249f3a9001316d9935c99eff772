@@ -41,14 +41,5 @@ public class button extends JButton {
 	public char getLetter(){
 		return letter;
 	}
-	
-	int blockNum;
-	public void setBlock(int b){
-		blockNum=b;
-	}
-	
-	public int getBlock(){
-		return blockNum;
-	}
-	}
 
+}

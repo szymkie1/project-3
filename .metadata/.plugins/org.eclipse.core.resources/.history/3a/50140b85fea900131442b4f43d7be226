@@ -183,18 +183,11 @@ public class gameGUI extends JFrame implements ActionListener{
 				gameButtons[i][j].setText(buttonString);
 				int whichBlock=letterToBlock(buttonChar);
 				gameButtons[i][j].setBlock(whichBlock);
+				gameButtons[i][j].addMouseListener(new buttonListener());
 				
 				
 				
 				
-				
-			}
-		}
-		
-		
-		for(int a=0; a < 6; a++){
-			for(int b=0; b<6; b++){
-				gameButtons[a][b].addMouseListener(new buttonListener(gameButtons));
 				
 			}
 		}
@@ -308,13 +301,6 @@ public class gameGUI extends JFrame implements ActionListener{
 	
 class buttonListener implements MouseListener{
 	
-	button[][] buttonArray;
-	
-	buttonListener(button[][] tempArray){
-		buttonArray=tempArray;
-		
-	}
-	
 	
 
 	@Override
@@ -327,29 +313,9 @@ class buttonListener implements MouseListener{
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
-		
-		MouseEvent[] currEvents;
+		button currButton = (button) e.getSource();
 		
 		mouseEvents.setTwoEvents(e);
-		
-		if(mouseEvents.getCurrentClick() == 1){
-			currEvents=mouseEvents.getTwoEvents();
-			button currButton = (button)currEvents[0].getSource();
-			System.out.println(currButton.getBlock());
-			
-		}
-		else if(mouseEvents.getCurrentClick() == 0){
-			currEvents=mouseEvents.getTwoEvents();
-			button currButton1 = (button)currEvents[0].getSource();
-			button currButton2 = (button)currEvents[1].getSource();
-			
-			if(currButton2.getBlock() != -1){
-			System.out.println("You can't move a block if another block is in that location");	
-			}
-			
-		}
-		
-		
 		
 		
 		

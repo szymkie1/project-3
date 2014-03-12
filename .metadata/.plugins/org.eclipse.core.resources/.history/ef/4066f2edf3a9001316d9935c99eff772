@@ -14,8 +14,6 @@ import javax.swing.border.*;
 
 @SuppressWarnings("serial")
 
-
-
 public class gameGUI extends JFrame implements ActionListener{
 	
 	private JMenuBar topMenu;
@@ -27,7 +25,6 @@ public class gameGUI extends JFrame implements ActionListener{
 	private JButton hint, reset, solve;
 	private level[] gameLevels = new level[12];
 	private button gameButtons[][] = new button[6][6];
-	
 	
 	public gameGUI(){
 		
@@ -192,17 +189,6 @@ public class gameGUI extends JFrame implements ActionListener{
 		}
 		
 		
-		for(int a=0; a < 6; a++){
-			for(int b=0; b<6; b++){
-				gameButtons[a][b].addMouseListener(new buttonListener(gameButtons));
-				
-			}
-		}
-		
-		
-		
-		
-		
 		
 		
 		
@@ -301,21 +287,8 @@ public class gameGUI extends JFrame implements ActionListener{
 	}
 	
 }
-	
-	
 
-
-	
 class buttonListener implements MouseListener{
-	
-	button[][] buttonArray;
-	
-	buttonListener(button[][] tempArray){
-		buttonArray=tempArray;
-		
-	}
-	
-	
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -327,32 +300,8 @@ class buttonListener implements MouseListener{
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
-		
-		MouseEvent[] currEvents;
-		
-		mouseEvents.setTwoEvents(e);
-		
-		if(mouseEvents.getCurrentClick() == 1){
-			currEvents=mouseEvents.getTwoEvents();
-			button currButton = (button)currEvents[0].getSource();
-			System.out.println(currButton.getBlock());
-			
-		}
-		else if(mouseEvents.getCurrentClick() == 0){
-			currEvents=mouseEvents.getTwoEvents();
-			button currButton1 = (button)currEvents[0].getSource();
-			button currButton2 = (button)currEvents[1].getSource();
-			
-			if(currButton2.getBlock() != -1){
-			System.out.println("You can't move a block if another block is in that location");	
-			}
-			
-		}
-		
-		
-		
-		
-		
+		button currButton = (button) e.getSource();
+		System.out.println(currButton.getBlock());
 		
 	}
 

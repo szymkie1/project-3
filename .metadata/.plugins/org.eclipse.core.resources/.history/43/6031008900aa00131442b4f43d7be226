@@ -183,18 +183,11 @@ public class gameGUI extends JFrame implements ActionListener{
 				gameButtons[i][j].setText(buttonString);
 				int whichBlock=letterToBlock(buttonChar);
 				gameButtons[i][j].setBlock(whichBlock);
+				gameButtons[i][j].addMouseListener(new buttonListener(gameButtons));
 				
 				
 				
 				
-				
-			}
-		}
-		
-		
-		for(int a=0; a < 6; a++){
-			for(int b=0; b<6; b++){
-				gameButtons[a][b].addMouseListener(new buttonListener(gameButtons));
 				
 			}
 		}
@@ -342,14 +335,13 @@ class buttonListener implements MouseListener{
 			currEvents=mouseEvents.getTwoEvents();
 			button currButton1 = (button)currEvents[0].getSource();
 			button currButton2 = (button)currEvents[1].getSource();
-			
-			if(currButton2.getBlock() != -1){
-			System.out.println("You can't move a block if another block is in that location");	
-			}
+			System.out.println(currButton1.getBlock());
+			System.out.println(currButton2.getBlock());
 			
 		}
 		
-		
+		System.out.println("Button 1"+buttonArray[0][0]);
+		System.out.println("Last Button"+buttonArray[5][5]);
 		
 		
 		
