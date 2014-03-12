@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.border.*;
 
 
 @SuppressWarnings("serial")
@@ -20,8 +21,9 @@ public class gameGUI extends JFrame implements ActionListener{
 	private JPanel infoPanel;
 	private JPanel uiPanel;
 	private JLabel bScoreLabel, bestScore, moveLabel, moves;
-	private JButton hint, reset;
+	private JButton hint, reset, solve;
 	private level[] gameLevels = new level[12];
+	private button[][] gameButtons = new button[10][10];
 	
 	public gameGUI(){
 		
@@ -31,21 +33,45 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 		File[] fileArray = fileSetup.setFiles();
 		
+		char[][] arrayL = null;
 		
 		
 		
-		for(int numFiles = 0; numFiles < 12; numFiles++){
+		
+		for(int numFiles = 0; numFiles < 1; numFiles++){
 			gameLevels[numFiles] = new level();
 			gameLevels[numFiles].initLevel(fileArray[numFiles]);
-		}
+			gameLevels[numFiles].getBlocks();
+			arrayL = new char[6][6];
+			arrayL=gameLevels[numFiles].getArrayWithBlocks();
+			
+
+			
+			}
 		
-		ArrayList<block> blocks= new ArrayList<block>();
-		blocks = gameLevels[0].getButtons();
-		System.out.println(blocks.get(0).getRow());
-		System.out.println(blocks.get(0).getColumn());
-		System.out.println(blocks.get(0).getWidth());
-		System.out.println(blocks.get(0).getHeight());
-		System.out.println(blocks.get(0).getDirection());
+		
+		
+		
+		
+		
+		
+		
+			
+			
+			
+	
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		
@@ -101,7 +127,8 @@ public class gameGUI extends JFrame implements ActionListener{
                 KeyEvent.VK_A, ActionEvent.ALT_MASK));
 		hAbout.addActionListener(this);
 		
-		gameBoard = new JPanel();
+		gameBoard = new JPanel(new GridLayout(6,6));
+		
 		infoPanel = new JPanel();
 		
 		uiPanel = new JPanel();
@@ -118,13 +145,33 @@ public class gameGUI extends JFrame implements ActionListener{
 		reset = new JButton("Reset");
 		infoPanel.add(reset);
 		
+		solve = new JButton("Solve");
+		infoPanel.add(solve);
+		
 		bScoreLabel = new JLabel("Best Score: ");
 		infoPanel.add(bScoreLabel);
 		bestScore = new JLabel("0");
 		infoPanel.add(bestScore);
 		
+		
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 10; j++) {
+				gameButtons[i][j] = new button();
+				gameButtons[i][j].setPreferredSize(new Dimension(20, 20));
+				gameBoard.add(gameButtons[i][j]);
+				gameButtons[i][j].setX(i);
+				gameButtons[i][j].setY(j);
+				gameButtons[i][j].setVisible(true);
+			}
+		}
+		
+		
+		
+		
+		
 		uiPanel.add(infoPanel);
 		uiPanel.add(gameBoard);
+		
 		
 		add(uiPanel);
 		
@@ -135,7 +182,7 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 		
 		
-		
+		pack();
 		
 		setVisible(true);
 		
@@ -205,6 +252,7 @@ class fileSetup{
 			}
 		catch(IOException e){
 			System.out.println(e);
+			System.out.println("Exiting game.");
 			System.exit(0);
 		}
 		}
