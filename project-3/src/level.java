@@ -139,8 +139,8 @@ public class level{
 		for(int a=0; a < blocks.size(); a++){
 			for(int b = 0; b < blocks.get(a).getLocations().size() ; b++){
 	
-				xLoc=blocks.get(a).getLocations().get(b).getX();
-				yLoc=blocks.get(a).getLocations().get(b).getY();
+				xLoc=blocks.get(a).getLocations().get(b).getRow();
+				yLoc=blocks.get(a).getLocations().get(b).getColumn();
 				charSet=blocks.get(a).getLetter();
 				
 				

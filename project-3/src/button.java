@@ -15,21 +15,21 @@ public class button extends JButton {
 	
 	int xCoord = -1;
 
-	public void setX(int x) {
+	public void setRow(int x) {
 		xCoord = x;
 	}
 
 	int yCoord = -1;
 
-	public void setY(int y) {
+	public void setColumn(int y) {
 		yCoord = y;
 	}
 
-	public int getXcoord() {
+	public int getRow() {
 		return xCoord;
 	}
 
-	public int getYcoord() {
+	public int getColumn() {
 		return yCoord;
 	}
 	
@@ -49,6 +49,16 @@ public class button extends JButton {
 	
 	public int getBlock(){
 		return blockNum;
+	}
+	
+	String buttonString;
+	public void setButtonString(String s){
+		buttonString=s;
+	}
+	
+	public String getButtonString(){
+		return buttonString;
+	
 	}
 	}
 

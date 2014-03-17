@@ -175,16 +175,17 @@ public class gameGUI extends JFrame implements ActionListener{
 				gameButtons[i][j] = new button();
 
 				panels[0].add(gameButtons[i][j]);
-				gameButtons[i][j].setX(i);
-				gameButtons[i][j].setY(j);
+				gameButtons[i][j].setRow(i);
+				gameButtons[i][j].setColumn(j);
 				String buttonString = Character.toString(convArray[i][j]);
+				gameButtons[i][j].setButtonString(buttonString);
 				char buttonChar =convArray[i][j];
 				gameButtons[i][j].setText(buttonString);
 				int whichBlock=letterToBlock(buttonChar);
 				gameButtons[i][j].setBlock(whichBlock);
 
 
-
+				
 
 
 			}
@@ -193,7 +194,7 @@ public class gameGUI extends JFrame implements ActionListener{
 
 		for(int a=0; a < 6; a++){
 			for(int b=0; b<6; b++){
-				gameButtons[a][b].addMouseListener(new buttonListener(gameButtons));
+		gameButtons[a][b].addMouseListener(new buttonListener(gameButtons,gameLevels[0],panels[0]));
 
 			}
 		}
@@ -308,9 +309,12 @@ public class gameGUI extends JFrame implements ActionListener{
 class buttonListener implements MouseListener{
 
 	button[][] buttonArray;
+	level currLevel;
+	board currBoard;
 
-	buttonListener(button[][] tempArray){
+	buttonListener(button[][] tempArray, level tempLevel, board temBoard){
 		buttonArray=tempArray;
+		currLevel=tempLevel;
 
 	}
 
@@ -334,8 +338,7 @@ class buttonListener implements MouseListener{
 		if(mouseEvents.getCurrentClick() == 1){
 			currEvents=mouseEvents.getTwoEvents();
 			button currButton = (button)currEvents[0].getSource();
-			System.out.println(currButton.getBlock());
-
+			
 		}
 		else if(mouseEvents.getCurrentClick() == 0){
 			currEvents=mouseEvents.getTwoEvents();
@@ -344,6 +347,70 @@ class buttonListener implements MouseListener{
 
 			if(currButton2.getBlock() != -1){
 			System.out.println("You can't move a block if another block is in that location");	
+			}
+			else{
+				int size;
+				size=currLevel.getBlocks().get(currButton1.getBlock()).getSize();
+				System.out.println("Size"+size);
+				int changeRow=currButton2.getRow() - currButton1.getRow();
+				int changeColumn=currButton2.getColumn() - currButton1.getColumn();
+				
+				if(changeRow>0){
+					int currentRow=currButton1.getRow();
+					int currentColumn=currButton1.getColumn();
+					
+					int checkIter=0;
+					
+					System.out.println("Current Row "+currentRow);
+					System.out.println("Change Row "+changeRow);
+					System.out.println(buttonArray[currentRow+1][currentColumn].getBlock());
+					for(int i=(currentRow+1); i<=(changeRow+currentRow); i++){
+						  if(buttonArray[i][currentColumn].getBlock() == -1)
+							checkIter++;
+						
+					}
+					if(checkIter == changeRow){
+						int currentBlock=currButton1.getBlock();
+						System.out.println(currentBlock);
+						int blockSize=currLevel.getBlocks().get(currentBlock).getSize();
+						System.out.println(blockSize);
+						int firstRow=currButton1.getRow();
+						System.out.println(firstRow);
+						for(int blockIter=0; blockIter<blockSize; blockIter++){
+							
+						
+                         
+				currLevel.getBlocks().get(currentBlock).getLocations().get(blockIter).
+					setRow(currentRow+changeRow+blockIter);
+				       
+				
+							}
+			String currButtonString = buttonArray[currentRow][currentColumn].getButtonString();
+			int currButtonInt = buttonArray[currentRow][currentColumn].getBlock();
+						int startRow=currentRow;
+						int endRow=currentRow-size;
+						for(int blockIter=startRow; blockIter>endRow; blockIter--){
+							buttonArray[blockIter][currentColumn].setText(".");
+							buttonArray[blockIter][currentColumn].setBlock(-1);
+						}
+						int moveRow=currentRow+(changeRow-1);
+						int endMove=currentRow+(changeRow-1)+size;
+						for(int blockIter=moveRow; blockIter<endMove; blockIter++){
+							buttonArray[blockIter][currentColumn].setText(currButtonString);
+							buttonArray[blockIter][currentColumn].setBlock(currButtonInt);
+						}
+					}
+					else{
+						System.out.println("Problem");
+					}
+				}
+				else if(changeColumn>0){
+					System.out.println("Changing Column");
+				}
+				else{
+					System.out.println("No change.");
+				}
+				
 			}
 
 		}

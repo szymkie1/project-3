@@ -108,24 +108,24 @@ public class block{
 			
 			if(s==0){
 				
-				temp.setX(row);
-				temp.setY(column);
+				temp.setRow(row);
+				temp.setColumn(column);
 				rowIter++;
 				columnIter++;
 				
 			}
 			else{
 				if(rowIter < height){
-					temp.setX(row + rowIter);
+					temp.setRow(row + rowIter);
 						}
 				else{
-					temp.setX(row);
+					temp.setRow(row);
 				}
 				if(columnIter < width){
-					temp.setY(column + columnIter);
+					temp.setColumn(column + columnIter);
 				}
 				else{
-					temp.setY(column);
+					temp.setColumn(column);
 				}
 				
 				

@@ -5,16 +5,16 @@ class locations{
 		
 		int xLoc=0;
 		int yLoc=0;
-		public void setX(int x){
+		public void setRow(int x){
 			xLoc=(x-1);
 		}
-		public int getX(){
+		public int getRow(){
 			return xLoc;
 		}
-		public void setY(int y){
+		public void setColumn(int y){
 			yLoc=(y-1);
 		}
-		public int getY(){
+		public int getColumn(){
 			return yLoc;
 		}
 		}
