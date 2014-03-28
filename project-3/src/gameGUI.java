@@ -25,7 +25,71 @@ public class gameGUI extends JFrame implements ActionListener{
 	private JLabel bScoreLabel, bestScore, moveLabel, moves;
 	private JButton hint, reset, solve;
 	private level[] gameLevels = new level[12];
-	private button gameButtons[][] = new button[6][6];
+	
+	private arrayContainer[] dispArrays = new arrayContainer[12];
+	public board[] panels = new board[12];
+	public JPanel uiPanel = new JPanel();
+	
+	
+ private void getDispArrays(File[] fileArray){
+		
+		for(int i=0; i < 12; i++){
+		gameLevels[i] = new level();
+		gameLevels[i].initLevel(fileArray[i]);
+		gameLevels[i].getBlocks();
+		char[][] arrayTemp=gameLevels[i].getArrayWithBlocks();
+		dispArrays[i] = new arrayContainer();
+		dispArrays[i].setArray(arrayTemp);
+		}
+		
+	}
+	
+	private void initPanels(int start){
+		
+	   for(int i=start; i<start+1; i++){	
+		panels[i] = new board();
+		panels[i].setLevel(i);
+		panels[i].setLayout(new GridLayout(6,6));
+	   }
+		
+	}
+	
+	private void setupPanels(int start){
+		
+		for(int p=start; p<start+1; p++){
+			
+        button gameButtons[][] = new button[6][6];
+		char[][] convArray=dispArrays[p].getArray();
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 6; j++) {
+				gameButtons[i][j] = new button();
+				
+				panels[p].add(gameButtons[i][j]);
+				gameButtons[i][j].setRow(i);
+				gameButtons[i][j].setColumn(j);
+				String buttonString = Character.toString(convArray[i][j]);
+				gameButtons[i][j].setButtonString(buttonString);
+				char buttonChar =convArray[i][j];
+				gameButtons[i][j].setText(buttonString);
+				int whichBlock=letterToBlock(buttonChar);
+				gameButtons[i][j].setBlock(whichBlock);
+				gameButtons[i][j].addMouseListener(new buttonListener(gameButtons,
+						gameLevels[p],panels[p],panels,uiPanel));
+				
+			}
+			
+		}
+		
+		/*
+		for(int a=0; a < 6; a++){
+			for(int b=0; b<6; b++){
+	        gameButtons[a][b].addMouseListener(new buttonListener(gameButtons,
+			gameLevels[p],panels[p]));
+
+			}
+		}*/
+		}
+	}
 
 
 	public gameGUI(){
@@ -39,57 +103,9 @@ public class gameGUI extends JFrame implements ActionListener{
 		File[] fileArray = fileSetup.setFiles();
 
 
-		arrayContainer[] dispArrays = new arrayContainer[12];
+		
 
-
-
-		for(int numFiles = 0; numFiles < 1; numFiles++){
-			gameLevels[numFiles] = new level();
-			gameLevels[numFiles].initLevel(fileArray[numFiles]);
-			gameLevels[numFiles].getBlocks();
-			char[][] arrayTemp=gameLevels[numFiles].getArrayWithBlocks();
-			dispArrays[numFiles] = new arrayContainer();
-			dispArrays[numFiles].setArray(arrayTemp);
-
-			}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+			
 
 		topMenu = new JMenuBar();
 		setJMenuBar(topMenu);
@@ -131,22 +147,13 @@ public class gameGUI extends JFrame implements ActionListener{
                 KeyEvent.VK_A, ActionEvent.ALT_MASK));
 		hAbout.addActionListener(this);
 
-		board[] panels = new board[12];
-
-		panels[0] = new board();
-
-		panels[0].setLayout(new GridLayout(6,6));
-
-
-
-
+		
+        
+		
 		JPanel infoPanel = new JPanel();
 
-		JPanel uiPanel = new JPanel();
+		
 		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.Y_AXIS));
-
-
-
 
 
 		moveLabel = new JLabel("Move: ");
@@ -168,54 +175,29 @@ public class gameGUI extends JFrame implements ActionListener{
 		bestScore = new JLabel("0");
 		infoPanel.add(bestScore);
 
-
-		char[][] convArray=dispArrays[0].getArray();
-		for (int i = 0; i < 6; i++) {
-			for (int j = 0; j < 6; j++) {
-				gameButtons[i][j] = new button();
-
-				panels[0].add(gameButtons[i][j]);
-				gameButtons[i][j].setRow(i);
-				gameButtons[i][j].setColumn(j);
-				String buttonString = Character.toString(convArray[i][j]);
-				gameButtons[i][j].setButtonString(buttonString);
-				char buttonChar =convArray[i][j];
-				gameButtons[i][j].setText(buttonString);
-				int whichBlock=letterToBlock(buttonChar);
-				gameButtons[i][j].setBlock(whichBlock);
-
-
-				
-
-
-			}
+        getDispArrays(fileArray);
+		
+		
+		
+		for(int iSetup=0; iSetup < 12; iSetup++){
+		initPanels(0);
+		setupPanels(0);
 		}
 
 
-		for(int a=0; a < 6; a++){
-			for(int b=0; b<6; b++){
-		gameButtons[a][b].addMouseListener(new buttonListener(gameButtons,gameLevels[0],panels[0]));
-
-			}
-		}
-
-
-
-
-
-
-
-
-
-
-
+		
 		uiPanel.add(infoPanel);
 		uiPanel.add(panels[0]);
-
-
+	
+		
+		
+		
 		add(uiPanel);
-
-
+		
+		
+		
+		
+		
 
 
 
@@ -306,16 +288,288 @@ public class gameGUI extends JFrame implements ActionListener{
 
 
 
-class buttonListener implements MouseListener{
+class buttonListener extends JFrame implements MouseListener{
+	
+	
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4981159365617764455L;
 	button[][] buttonArray;
 	level currLevel;
 	board currBoard;
+	board[] boards;
+	JPanel gamePanel;
 
-	buttonListener(button[][] tempArray, level tempLevel, board temBoard){
+	buttonListener(button[][] tempArray, level tempLevel, board tempBoard, board[] tBoard,
+			JPanel uiPanel){
 		buttonArray=tempArray;
 		currLevel=tempLevel;
+		currBoard=tempBoard;
+		boards=tBoard;
+		gamePanel=uiPanel;
 
+	}
+	
+	public int checkWinner(){
+		if(buttonArray[2][5].getBlock() != -1){
+			return 1;
+		}
+		return 0;
+	}
+	
+	private void moveDown(button b1, button b2){
+		System.out.println("Move Down");
+		char direction;
+		int block;
+		block=b1.getBlock();
+		direction=currLevel.getBlocks().get(block).getDirection();
+		
+		if(direction=='v'){
+			int column=b1.getColumn();
+			int startRow=b1.getRow();
+			int endRow=b2.getRow();
+			int changeRow=endRow-startRow;
+			
+			int checkEmptyIter=0;
+			for(int checkEmpty=startRow+1; checkEmpty <= endRow; checkEmpty++){
+				int currButton=buttonArray[checkEmpty][column].getBlock();
+				if(currButton == -1){
+					checkEmptyIter++;
+				}
+			}
+			
+			
+			
+			if(checkEmptyIter == changeRow){
+				int size=currLevel.getBlocks().get(block).getSize();
+				int startDel=currLevel.getBlocks().get(block).getLocations().get(0).getRow();
+				
+				for(int delInc=startDel; delInc < (size+startDel); delInc++ ){
+					buttonArray[delInc][column].setBlock(-1);
+					buttonArray[delInc][column].setText(".");
+					System.out.println("Set position: "+delInc+" to -1");
+				}
+				
+				char currBlock=currLevel.getBlocks().get(block).getLetter();
+				
+				if(size == 1){
+					buttonArray[endRow][column].setBlock(block);
+					buttonArray[endRow][column].setText(Character.toString(currBlock));
+					currLevel.getBlocks().get(block).getLocations().get(0).setRow(endRow+1);
+				}
+				
+				else{
+					int start=endRow-size+1;
+					int end=endRow;
+					int currSize=0;
+					for(int changeInc=start; changeInc <= end; changeInc++){
+						buttonArray[changeInc][column].setBlock(block);
+						buttonArray[changeInc][column].setText(Character.toString(currBlock));
+				currLevel.getBlocks().get(block).getLocations().get(currSize).setRow(changeInc+1);
+						currSize++;
+					}
+				}
+				
+				
+				//as buttons are moved,  
+				//currLevel.getBlocks.get(block).getLocations().get...
+				//row must be set!!!!!
+				
+				
+			}
+			else{
+				System.out.println("Blocks are in the way of this move");
+			}
+		}
+		else{
+			System.out.println("Block doesn't move in this direction");
+		}
+	}
+	
+	private void moveUp(button b1, button b2){
+		System.out.println("Move Up");
+		char direction;
+		int block;
+		block=b1.getBlock();
+		direction=currLevel.getBlocks().get(block).getDirection();
+		
+		if(direction=='v'){
+			int column=b1.getColumn();
+			int startRow=b1.getRow();
+			int endRow=b2.getRow();
+			int changeRow=endRow-startRow;
+			
+			int checkEmptyIter=0;
+			for(int checkEmpty=startRow-1; checkEmpty >= endRow; checkEmpty--){
+				int currButton=buttonArray[checkEmpty][column].getBlock();
+				if(currButton == -1){
+					checkEmptyIter++;
+				}
+		    }
+			if(-(checkEmptyIter) == changeRow){
+				int size=currLevel.getBlocks().get(block).getSize();
+				int startDel=currLevel.getBlocks().get(block).getLocations().get(0).getRow();
+				for(int delInc=startDel; delInc < (size+startDel); delInc++ ){
+					buttonArray[delInc][column].setBlock(-1);
+					buttonArray[delInc][column].setText(".");
+					System.out.println("Set position: "+delInc+" to -1");
+				}
+				
+				char currBlock=currLevel.getBlocks().get(block).getLetter();
+				
+				if(size == 1){
+					buttonArray[endRow][column].setBlock(block);
+					buttonArray[endRow][column].setText(Character.toString(currBlock));
+					currLevel.getBlocks().get(block).getLocations().get(0).setRow(endRow+1);
+				}
+				
+				else{
+					int start=endRow;
+					int end=endRow+size-1;
+					int currSize=0;
+					for(int changeInc=start; changeInc <= end; changeInc++){
+						buttonArray[changeInc][column].setBlock(block);
+						buttonArray[changeInc][column].setText(Character.toString(currBlock));
+				currLevel.getBlocks().get(block).getLocations().get(currSize).setRow(changeInc+1);
+						currSize++;
+					}
+			}
+			}
+			else{
+				System.out.println("Blocks are in the way of this move");
+			}
+			
+		}
+		else{
+			System.out.println("Block doesn't move in this direction");
+		}
+		
+	}
+	
+	private void moveRight(button b1, button b2){
+		System.out.println("Move Right");
+		char direction;
+		int block;
+		block=b1.getBlock();
+		direction=currLevel.getBlocks().get(block).getDirection();
+		
+		if(direction=='h'){
+			int row=b1.getRow();
+			int startColumn=b1.getColumn();
+			int endColumn=b2.getColumn();
+			int changeColumn=endColumn-startColumn;
+			
+			int checkEmptyIter=0;
+			for(int checkEmpty=startColumn; checkEmpty <= endColumn; checkEmpty++){
+				System.out.println("Check Empty: "+checkEmpty);
+				int currButton=buttonArray[row][checkEmpty].getBlock();
+				if(currButton == -1){
+					checkEmptyIter++;
+				}
+		    }
+			if(checkEmptyIter == changeColumn){
+				int size=currLevel.getBlocks().get(block).getSize();
+				int startDel=currLevel.getBlocks().get(block).getLocations().get(0).getColumn();
+				for(int delInc=startDel; delInc < (size+startDel); delInc++ ){
+					buttonArray[row][delInc].setBlock(-1);
+					buttonArray[row][delInc].setText(".");
+					System.out.println("Set position: "+delInc+" to -1");
+				}
+				
+				char currBlock=currLevel.getBlocks().get(block).getLetter();
+				
+				if(size == 1){
+					buttonArray[row][endColumn].setBlock(block);
+					buttonArray[row][endColumn].setText(Character.toString(currBlock));
+					currLevel.getBlocks().get(block).getLocations().get(0).setColumn(endColumn+1);
+				}
+				else{
+					int start=endColumn-size+1;
+					int end=endColumn;
+					int currSize=0;
+					for(int changeInc=start; changeInc <= end; changeInc++){
+						buttonArray[row][changeInc].setBlock(block);
+						buttonArray[row][changeInc].setText(Character.toString(currBlock));
+				currLevel.getBlocks().get(block).getLocations().get(currSize).setColumn(changeInc+1);
+						currSize++;
+					}
+				}
+			}
+			else{
+				System.out.println("Blocks are in the way of this move");
+			}
+		}
+		else{
+			System.out.println("Block doesn't move in this direction");
+		}
+		
+	}
+	
+	private void moveLeft(button b1, button b2){
+		System.out.println("Move Left");
+		char direction;
+		int block;
+		block=b1.getBlock();
+		direction=currLevel.getBlocks().get(block).getDirection();
+		
+		if(direction=='h'){
+			int row=b1.getRow();
+			int startColumn=b1.getColumn();
+			int endColumn=b2.getColumn();
+			int changeColumn=endColumn-startColumn;
+			
+			int checkEmptyIter=0;
+			for(int checkEmpty=startColumn-1; checkEmpty >= endColumn; checkEmpty--){
+				int currButton=buttonArray[row][checkEmpty].getBlock();
+				if(currButton == -1){
+					checkEmptyIter++;
+				}
+		    }
+			
+			
+			
+			
+			if(-(checkEmptyIter) == changeColumn){
+				
+				
+				
+				int size=currLevel.getBlocks().get(block).getSize();
+				int startDel=currLevel.getBlocks().get(block).getLocations().get(0).getColumn();
+				for(int delInc=startDel; delInc < (size+startDel); delInc++ ){
+					buttonArray[row][delInc].setBlock(-1);
+					buttonArray[row][delInc].setText(".");
+					System.out.println("Set position: "+delInc+" to -1");
+				}
+				
+				char currBlock=currLevel.getBlocks().get(block).getLetter();
+				
+				if(size == 1){
+					buttonArray[row][endColumn].setBlock(block);
+					buttonArray[row][endColumn].setText(Character.toString(currBlock));
+					currLevel.getBlocks().get(block).getLocations().get(0).setColumn(endColumn+1);
+				}
+				else{
+					int start=endColumn;
+					int end=endColumn+size-1;
+					int currSize=0;
+					for(int changeInc=start; changeInc <= end; changeInc++){
+						buttonArray[row][changeInc].setBlock(block);
+						buttonArray[row][changeInc].setText(Character.toString(currBlock));
+				currLevel.getBlocks().get(block).getLocations().get(currSize).setColumn(changeInc+1);
+						currSize++;
+					}
+			}
+			}
+			else{
+				System.out.println("Blocks are in the way of this move");
+			}
+		}
+		else{
+			System.out.println("Block doesn't move in this direction");
+		}
+		
 	}
 
 
@@ -349,67 +603,45 @@ class buttonListener implements MouseListener{
 			System.out.println("You can't move a block if another block is in that location");	
 			}
 			else{
-				int size;
-				size=currLevel.getBlocks().get(currButton1.getBlock()).getSize();
-				System.out.println("Size"+size);
-				int changeRow=currButton2.getRow() - currButton1.getRow();
-				int changeColumn=currButton2.getColumn() - currButton1.getColumn();
 				
-				if(changeRow>0){
-					int currentRow=currButton1.getRow();
-					int currentColumn=currButton1.getColumn();
-					
-					int checkIter=0;
-					
-					System.out.println("Current Row "+currentRow);
-					System.out.println("Change Row "+changeRow);
-					System.out.println(buttonArray[currentRow+1][currentColumn].getBlock());
-					for(int i=(currentRow+1); i<=(changeRow+currentRow); i++){
-						  if(buttonArray[i][currentColumn].getBlock() == -1)
-							checkIter++;
-						
-					}
-					if(checkIter == changeRow){
-						int currentBlock=currButton1.getBlock();
-						System.out.println(currentBlock);
-						int blockSize=currLevel.getBlocks().get(currentBlock).getSize();
-						System.out.println(blockSize);
-						int firstRow=currButton1.getRow();
-						System.out.println(firstRow);
-						for(int blockIter=0; blockIter<blockSize; blockIter++){
-							
-						
-                         
-				currLevel.getBlocks().get(currentBlock).getLocations().get(blockIter).
-					setRow(currentRow+changeRow+blockIter);
-				       
+				int changeRow=currButton2.getRow()-currButton1.getRow();
+				int changeColumn=currButton2.getColumn()-currButton1.getColumn();
 				
-							}
-			String currButtonString = buttonArray[currentRow][currentColumn].getButtonString();
-			int currButtonInt = buttonArray[currentRow][currentColumn].getBlock();
-						int startRow=currentRow;
-						int endRow=currentRow-size;
-						for(int blockIter=startRow; blockIter>endRow; blockIter--){
-							buttonArray[blockIter][currentColumn].setText(".");
-							buttonArray[blockIter][currentColumn].setBlock(-1);
-						}
-						int moveRow=currentRow+(changeRow-1);
-						int endMove=currentRow+(changeRow-1)+size;
-						for(int blockIter=moveRow; blockIter<endMove; blockIter++){
-							buttonArray[blockIter][currentColumn].setText(currButtonString);
-							buttonArray[blockIter][currentColumn].setBlock(currButtonInt);
-						}
-					}
-					else{
-						System.out.println("Problem");
-					}
+				
+				if(changeRow > 0){
+					moveDown(currButton1, currButton2);
+					
+					
 				}
-				else if(changeColumn>0){
-					System.out.println("Changing Column");
+				else if(changeRow < 0){
+					moveUp(currButton1, currButton2);
+				}
+				else if(changeColumn > 0){
+					moveRight(currButton1, currButton2);
+				}
+				else if(changeColumn < 0){
+					moveLeft(currButton1, currButton2);
 				}
 				else{
-					System.out.println("No change.");
+					System.out.println("Not moving");
 				}
+				
+				if(buttonArray[0][5].getBlock() == 0 ||
+					buttonArray[1][5].getBlock() == 0 ||
+					buttonArray[2][5].getBlock() == 0 ||
+					buttonArray[3][5].getBlock() == 0 ||
+					buttonArray[4][5].getBlock() == 0 ||
+					buttonArray[5][5].getBlock() == 0){
+						System.out.println("Move to the next level");
+						int currentLevel=currBoard.getLevel();
+						System.out.println("Level:"+currBoard.getLevel());
+						gamePanel.remove(boards[currentLevel]);
+						System.out.println(boards[1].getLevel());
+					}
+				
+				
+				}
+			
 				
 			}
 
@@ -420,7 +652,7 @@ class buttonListener implements MouseListener{
 
 
 
-	}
+	
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
@@ -452,18 +684,18 @@ class fileSetup{
 
 		fileArray = new File[12];
 
-		fileArray[0] = new File("src/level1.data");
-		fileArray[1] = new File("src/level2.data");
-		fileArray[2] = new File("src/level3.data");
-		fileArray[3] = new File("src/level4.data");
-		fileArray[4] = new File("src/level5.data");
-		fileArray[5] = new File("src/level6.data");
-		fileArray[6] = new File("src/level7.data");
-		fileArray[7] = new File("src/level8.data");
-		fileArray[8] = new File("src/level9.data");
-		fileArray[9] = new File("src/level10.data");
-		fileArray[10] = new File("src/level11.data");
-		fileArray[11] = new File("src/level12.data");
+		fileArray[0] = new File("level1.data");
+		fileArray[1] = new File("level2.data");
+		fileArray[2] = new File("level3.data");
+		fileArray[3] = new File("level4.data");
+		fileArray[4] = new File("level5.data");
+		fileArray[5] = new File("level6.data");
+		fileArray[6] = new File("level7.data");
+		fileArray[7] = new File("level8.data");
+		fileArray[8] = new File("level9.data");
+		fileArray[9] = new File("level10.data");
+		fileArray[10] = new File("level11.data");
+		fileArray[11] = new File("level12.data");
 
 		for(int fileCount=0; fileCount < 12; fileCount++){
 		try(FileInputStream fis = new FileInputStream(fileArray[fileCount])){

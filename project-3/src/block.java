@@ -117,12 +117,14 @@ public class block{
 			else{
 				if(rowIter < height){
 					temp.setRow(row + rowIter);
+					rowIter++;
 						}
 				else{
 					temp.setRow(row);
 				}
 				if(columnIter < width){
 					temp.setColumn(column + columnIter);
+					columnIter++;
 				}
 				else{
 					temp.setColumn(column);
