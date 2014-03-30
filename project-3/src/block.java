@@ -1,3 +1,11 @@
+/**************************
+ * block.java
+ * Written by Ryan Szymkiewicz for CS 342 Project 3
+ * This class contains information about the blocks for each level.
+ * Inline comments will provide further details
+ ***************************/
+
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -23,8 +31,9 @@ public class block{
 	ArrayList<locations> locs;
 	int rowIter=0;
 	int columnIter=0;
+	//declare variables
 	
-	
+	//setter for row and column sizes(set to 6x6 by default...)
 	public void setRowSize(int y){
 		rowSize=y;
 	}
@@ -33,6 +42,8 @@ public class block{
 		columnSize=z;
 	}
 	
+	
+	//set and get the row and column locations for each block
 	public void setRow(int r){
 		row=r;
 	}
@@ -49,6 +60,7 @@ public class block{
 		return column;
 	}
 	
+	//set and get the width and height of each block
 	public void setWidth(int w){
 		width=w;
 	}
@@ -65,6 +77,7 @@ public class block{
 		return height;
 	}
 	
+	//set and get the direction that the block can move
 	public void setDirection(char d){
 		direction=d;
 	}
@@ -73,6 +86,7 @@ public class block{
 		return direction;
 	}
 	
+	//set and get size of block
 	public void setSize(){
 		size=width*height;
 	}
@@ -81,6 +95,7 @@ public class block{
 		return size;
 	}
 	
+	//set and get the letter identifier that will be displayed on the block
 	public void setLetter(char le){
 		letter=le;
 	}
@@ -90,24 +105,26 @@ public class block{
 	}
 	
 	
+	
+	//set array list of locations that each block will exist in
 	public void setLocations(){
-		locs = new ArrayList<locations>();
+		locs = new ArrayList<locations>();//declare array list
 		
 		
 		
-		
+          //one location for each increment of size		
 		  for(int s=0; s<size; s++){
 			  
 		 
 		
 		 
-			
+			//call actual location xlass
 			locations temp = new locations();
 			
 			 
 			
 			if(s==0){
-				
+				//set first location
 				temp.setRow(row);
 				temp.setColumn(column);
 				rowIter++;
@@ -132,20 +149,18 @@ public class block{
 				
 				
 			}
-		 
+		 //set the other locations depending on the size
 			locs.add(temp);
-			
+			//add the locations to the array list
 		 
 		  }
 		
 	}
 	
+	//return the array list
 	public ArrayList<locations> getLocations(){
 		return locs;
 	}
-	
-	
-	
 	
 }
 	

@@ -1,3 +1,11 @@
+/**************************
+ * level.java
+ * Written by Ryan Szymkiewicz for CS 342 Project 3
+ * This class contains information about each level.  It 
+ * sets up a character array from the input file and also 
+ * calls the functions to get blocks
+ ***************************/
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -18,17 +26,15 @@ public class level{
 	private char[][] blockArray;
 	
 	
-	
+	//this method will get level information from the file
 	public void initLevel(File currFile){
 	
+		//first read will check for the number of blocks
 		try (FileInputStream fis = new FileInputStream(currFile)) {
 			 
-			
-			
-			
-			
 			int currChar;
 			while ((currChar = fis.read()) != -1) {
+				
 				if((char)currChar == '\n'){
 					numLines++;
 				}
@@ -43,7 +49,8 @@ public class level{
 		inputArray = new char[numLines][20];
 		
 		
-		
+		//second read will take the input file and convert it
+		//to a character array of input
 		try (FileInputStream fis2 = new FileInputStream(currFile)) {
 			 
 			int currChar2;
@@ -79,7 +86,7 @@ public class level{
 	
 	}
 	
-	
+	//getters for the rows and columns
 	public int getNumRows(){
 		return rows;
 	}
@@ -88,33 +95,35 @@ public class level{
 		return columns;
 	}
 	
+	//get created input array
 	public char[][] getInputArray(){
 		return inputArray;
 	}
 	
+	//get the blocks
 	public ArrayList<block> getBlocks(){
 		
 		
 		for(int i=1; i < numLines; i++){
 			
 			block temp = new block();
-			temp.setRowSize(rows);
-			temp.setColumnSize(columns);
-			temp.setRow(Character.getNumericValue(inputArray[i][0]));
-			temp.setColumn(Character.getNumericValue(inputArray[i][3]));
-			temp.setWidth(Character.getNumericValue(inputArray[i][6]));
-			temp.setHeight(Character.getNumericValue(inputArray[i][9]));
-			temp.setDirection(inputArray[i][12]);
-			temp.setSize();
+			temp.setRowSize(rows);//6
+			temp.setColumnSize(columns);//6
+			temp.setRow(Character.getNumericValue(inputArray[i][0]));//get row start
+			temp.setColumn(Character.getNumericValue(inputArray[i][3]));//get column start
+			temp.setWidth(Character.getNumericValue(inputArray[i][6]));//get width
+			temp.setHeight(Character.getNumericValue(inputArray[i][9]));//get height
+			temp.setDirection(inputArray[i][12]);//set direction
+			temp.setSize();//set size
 			if(i==1){
-				temp.setLetter('Z');
+				temp.setLetter('Z');//set letter
 			}
 			else{
 				temp.setLetter((char)(63 + i));
 			}
-			System.out.println("Block:"+i);
-			temp.setLocations();
-			blocks.add(temp);
+			
+			temp.setLocations();//set locations
+			blocks.add(temp);//add block to list
 			
 		  }
 		
@@ -124,12 +133,14 @@ public class level{
 	}
 	
 	
+	//this method will create a character array that will display the whole game
+	//level with the blocks
 	public char[][] getArrayWithBlocks(){
 		blockArray = new char[6][6];
 		
 		for(int r=0; r < 6; r++){
 			for(int c=0; c < 6; c++){
-				blockArray[r][c]='.';
+				blockArray[r][c]='.';//start by settig each position to empty
 			}
 		}
 		
@@ -141,7 +152,7 @@ public class level{
 	
 				xLoc=blocks.get(a).getLocations().get(b).getRow();
 				yLoc=blocks.get(a).getLocations().get(b).getColumn();
-				charSet=blocks.get(a).getLetter();
+				charSet=blocks.get(a).getLetter();//get blocks and their positions
 				
 				
 				blockArray[xLoc][yLoc]=charSet;

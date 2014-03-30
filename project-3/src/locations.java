@@ -1,4 +1,9 @@
-
+/**************************
+ * locations.java
+ * Written by Ryan Szymkiewicz for CS 342 Project 3
+ * This class contains the locations occupied by each block
+ * It contains getters and setters for the row and column positions
+ ***************************/
 
 
 class locations{

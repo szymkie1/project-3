@@ -1,3 +1,14 @@
+/**************************
+ * gameGUI.java
+ * Written by Ryan Szymkiewicz for CS 342 Project 3
+ * These classes run the game.  The GUI is set up here and listeners are
+ * set up to check for user input.  The level files are also read in.
+ ***************************/
+
+
+
+
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -9,11 +20,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.swing.border.*;
+import java.io.PrintStream;
 
 
 @SuppressWarnings("serial")
 
-
+//The gameGUI class extends JFrame and implements ActionListener
+//this class sets up the GUI
 
 public class gameGUI extends JFrame implements ActionListener{
 
@@ -29,9 +42,17 @@ public class gameGUI extends JFrame implements ActionListener{
 	private arrayContainer[] dispArrays = new arrayContainer[12];
 	public board[] panels = new board[12];
 	public JPanel uiPanel = new JPanel();
+	private moveKeeper numMoves = new moveKeeper();
+	private File scoreFile;
+	private char[][] gameScores = new char[12][6];
+	//set up variables that will be used
 	
-	
- private void getDispArrays(File[] fileArray){
+	//use the gameLevels array to initialize the levels
+	//take each file and initalize each level from that file
+	//get the blocks,  and then create a character array that
+	//displays what each button should be displayed as
+	//set this array as well.
+	private void getDispArrays(File[] fileArray){
 		
 		for(int i=0; i < 12; i++){
 		gameLevels[i] = new level();
@@ -44,6 +65,8 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 	}
 	
+	//this will initialize 12 JPanels to switch between levels
+	//set the level number and set it to use a grid layout
 	private void initPanels(int start){
 		
 	   for(int i=start; i<start+1; i++){	
@@ -54,40 +77,35 @@ public class gameGUI extends JFrame implements ActionListener{
 		
 	}
 	
+	//the setupPanels method takes each panel and puts the game buttons on it
 	private void setupPanels(int start){
 		
 		for(int p=start; p<start+1; p++){
 			
-        button gameButtons[][] = new button[6][6];
+        button gameButtons[][] = new button[6][6];//create array of buttons
 		char[][] convArray=dispArrays[p].getArray();
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i++) {//each level is set to be 6x6
 			for (int j = 0; j < 6; j++) {
-				gameButtons[i][j] = new button();
+				gameButtons[i][j] = new button();//initialize each button
 				
-				panels[p].add(gameButtons[i][j]);
-				gameButtons[i][j].setRow(i);
+				panels[p].add(gameButtons[i][j]);//add button to panel
+				gameButtons[i][j].setRow(i);//set row and column
 				gameButtons[i][j].setColumn(j);
-				String buttonString = Character.toString(convArray[i][j]);
-				gameButtons[i][j].setButtonString(buttonString);
+				String buttonString = Character.toString(convArray[i][j]);//get button text
+				gameButtons[i][j].setButtonString(buttonString);//set button text
 				char buttonChar =convArray[i][j];
 				gameButtons[i][j].setText(buttonString);
-				int whichBlock=letterToBlock(buttonChar);
-				gameButtons[i][j].setBlock(whichBlock);
+				int whichBlock=letterToBlock(buttonChar);//find out which block is used here
+				gameButtons[i][j].setBlock(whichBlock);//set the block
 				gameButtons[i][j].addMouseListener(new buttonListener(gameButtons,
-						gameLevels[p],panels[p],panels,uiPanel));
-				
+						gameLevels[p],panels[p],panels,uiPanel,moves,numMoves,
+						bestScore,gameScores));
+				//add a mouse listener to check for input
 			}
 			
 		}
 		
-		/*
-		for(int a=0; a < 6; a++){
-			for(int b=0; b<6; b++){
-	        gameButtons[a][b].addMouseListener(new buttonListener(gameButtons,
-			gameLevels[p],panels[p]));
-
-			}
-		}*/
+		
 		}
 	}
 
@@ -95,17 +113,55 @@ public class gameGUI extends JFrame implements ActionListener{
 	public gameGUI(){
 
 
-
+		//set up JFrame for the game
 		super("Sliding Block Puzzles");
 
+		//set size
 		setSize(500,350);
 
+		//get an array of level files from the directory
 		File[] fileArray = fileSetup.setFiles();
+		
+		//get the scores file
+		scoreFile = new File("scores.data");
+		
+		//set up an array that contains the current lowest scores
+		//to complete a level
+		try(FileInputStream fis = new FileInputStream(scoreFile)){
+			System.out.println("Scoreboard file read.");
+			
+					int currentChar;
+					int rowIter=0;
+					int colIter=0;
+					while((currentChar = fis.read()) != -1){ 
+					
+					gameScores[rowIter][colIter]=(char)currentChar;
+					
+					colIter++;
+					if(colIter==6){
+						rowIter++;
+						colIter=0;
+					}
+						
+					}
+			
+			}
+		catch(IOException e){
+			System.out.println(e);
+			System.out.println("Scoreboard file read failed.");
+			}
+		
+		  
+		
 
 
 		
 
-			
+		//set up the two menu bars-game and help
+		//game menu will contain reset and exit options
+		//help will contain help and about options
+		//each menu option sets a mnemonic to allow for keystrokes and adds an action
+		//listener
 
 		topMenu = new JMenuBar();
 		setJMenuBar(topMenu);
@@ -149,13 +205,15 @@ public class gameGUI extends JFrame implements ActionListener{
 
 		
         
-		
+		//set up a new JPanel that will display level information
 		JPanel infoPanel = new JPanel();
 
-		
+		//set up a box layout
 		uiPanel.setLayout(new BoxLayout(uiPanel, BoxLayout.Y_AXIS));
 
 
+		//set up information for levels 
+		//contains move counter, reset, hint and solve buttons and the best score for level
 		moveLabel = new JLabel("Move: ");
 		infoPanel.add(moveLabel);
 		moves = new JLabel("0");
@@ -172,22 +230,27 @@ public class gameGUI extends JFrame implements ActionListener{
 
 		bScoreLabel = new JLabel("Best Score: ");
 		infoPanel.add(bScoreLabel);
-		bestScore = new JLabel("0");
+		bestScore = new JLabel(Character.toString(gameScores[0][3])+
+				Character.toString(gameScores[0][4]));
 		infoPanel.add(bestScore);
 
         getDispArrays(fileArray);
 		
 		
-		
+		//call the methods to set up the levels
 		for(int iSetup=0; iSetup < 12; iSetup++){
-		initPanels(0);
-		setupPanels(0);
+		initPanels(iSetup);
+		setupPanels(iSetup);
 		}
 
 
-		
+		//add information panel to JPanel and also the first level
 		uiPanel.add(infoPanel);
 		uiPanel.add(panels[0]);
+		
+		
+		
+
 	
 		
 		
@@ -210,7 +273,8 @@ public class gameGUI extends JFrame implements ActionListener{
 
 	}
 
-
+	//this method takes the block character and converts it to a number for use
+	//with the buttons
 	public int letterToBlock(char a){
 		int num=-1;
 		if(a=='Z'){
@@ -251,21 +315,37 @@ public class gameGUI extends JFrame implements ActionListener{
 
 
 
-
+	//menu option actions are handled here
 	public void actionPerformed(ActionEvent e) {
 
-		if(e.getSource() == gReset){
+		if(e.getSource() == gReset){//reset
 			System.out.println("Reset Pressed");
 		}
-		else if(e.getSource() == gExit){
+		else if(e.getSource() == gExit){//exit
 			System.out.println("Exiting");
 			System.exit(0);
 		}
-		else if(e.getSource() == hHelp){
+		else if(e.getSource() == hHelp){//help
 			JOptionPane.showMessageDialog(gameGUI.this,
-					"Coming Soon","Help", JOptionPane.PLAIN_MESSAGE );
+					"Help\n"+
+					"Buttons that span multiple rows\n"+
+					"move vertically.  Buttons that span\n"+
+					"multiple columns move vertically\n"+
+					"The goal of the game is to move the Z\n"+
+					"block to the right of the board.\n"+
+					"To move a piece click on the button \n"+
+					"that is closest to the direction you wish \n"+
+					"to move.  For example,  if you wish to move \n"+
+					"a block right,  first click on the rightmost button \n"+
+					"contained in that block, and then click on the button that\n"+
+					"you wish to move that block to \n"+
+					"Yes,  level 12 is unsolvable. \n"+
+					"That is the last level of the game as well \n"+
+					"Once level 12 has been reached,  the game can \n"+
+					"be exited.",
+					"Help", JOptionPane.PLAIN_MESSAGE );
 		}
-		else if(e.getSource() == hAbout){
+		else if(e.getSource() == hAbout){//about
 			JOptionPane.showMessageDialog(gameGUI.this,
 					"Sliding Block Puzzles \n"+
 				    "CS 342-Project 3 \n"+
@@ -287,38 +367,43 @@ public class gameGUI extends JFrame implements ActionListener{
 
 
 
-
+//the buttonListener class handles input by clicking on the buttons and
+//moves the buttons
 class buttonListener extends JFrame implements MouseListener{
 	
 	
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -4981159365617764455L;
 	button[][] buttonArray;
 	level currLevel;
 	board currBoard;
 	board[] boards;
 	JPanel gamePanel;
-
+	JLabel currMoves;
+	moveKeeper moves;
+	JLabel bestScore;
+	char[][] scoreArr;
+	
+	
+	
+	
+	//use the constructor to initialize variables that will be used
+	//in the class
 	buttonListener(button[][] tempArray, level tempLevel, board tempBoard, board[] tBoard,
-			JPanel uiPanel){
+			JPanel uiPanel, JLabel tMoves, moveKeeper tNumMoves, JLabel tbScores, 
+			char[][] tScores){
 		buttonArray=tempArray;
 		currLevel=tempLevel;
 		currBoard=tempBoard;
 		boards=tBoard;
 		gamePanel=uiPanel;
+		currMoves=tMoves;
+		moves=tNumMoves;
+		bestScore=tbScores;
+		scoreArr=tScores;
+		
 
 	}
 	
-	public int checkWinner(){
-		if(buttonArray[2][5].getBlock() != -1){
-			return 1;
-		}
-		return 0;
-	}
-	
+	//move down
 	private void moveDown(button b1, button b2){
 		System.out.println("Move Down");
 		char direction;
@@ -326,7 +411,7 @@ class buttonListener extends JFrame implements MouseListener{
 		block=b1.getBlock();
 		direction=currLevel.getBlocks().get(block).getDirection();
 		
-		if(direction=='v'){
+		if(direction=='v'){//check for proper direction
 			int column=b1.getColumn();
 			int startRow=b1.getRow();
 			int endRow=b2.getRow();
@@ -338,7 +423,7 @@ class buttonListener extends JFrame implements MouseListener{
 				if(currButton == -1){
 					checkEmptyIter++;
 				}
-			}
+			}//check to make sure that collisions won't occur
 			
 			
 			
@@ -350,10 +435,11 @@ class buttonListener extends JFrame implements MouseListener{
 					buttonArray[delInc][column].setBlock(-1);
 					buttonArray[delInc][column].setText(".");
 					System.out.println("Set position: "+delInc+" to -1");
-				}
+				}//delete the block from the old squares
 				
 				char currBlock=currLevel.getBlocks().get(block).getLetter();
 				
+				//set the block onto the new squares
 				if(size == 1){
 					buttonArray[endRow][column].setBlock(block);
 					buttonArray[endRow][column].setText(Character.toString(currBlock));
@@ -373,9 +459,7 @@ class buttonListener extends JFrame implements MouseListener{
 				}
 				
 				
-				//as buttons are moved,  
-				//currLevel.getBlocks.get(block).getLocations().get...
-				//row must be set!!!!!
+				moves.addMove();//increment move class
 				
 				
 			}
@@ -388,6 +472,7 @@ class buttonListener extends JFrame implements MouseListener{
 		}
 	}
 	
+	//move up-same overall procedure as above
 	private void moveUp(button b1, button b2){
 		System.out.println("Move Up");
 		char direction;
@@ -436,6 +521,7 @@ class buttonListener extends JFrame implements MouseListener{
 						currSize++;
 					}
 			}
+				moves.addMove();
 			}
 			else{
 				System.out.println("Blocks are in the way of this move");
@@ -448,6 +534,7 @@ class buttonListener extends JFrame implements MouseListener{
 		
 	}
 	
+	//move right-same overall procedure as above
 	private void moveRight(button b1, button b2){
 		System.out.println("Move Right");
 		char direction;
@@ -496,6 +583,7 @@ class buttonListener extends JFrame implements MouseListener{
 						currSize++;
 					}
 				}
+				moves.addMove();
 			}
 			else{
 				System.out.println("Blocks are in the way of this move");
@@ -507,6 +595,7 @@ class buttonListener extends JFrame implements MouseListener{
 		
 	}
 	
+	//move left-same overall procedure as above
 	private void moveLeft(button b1, button b2){
 		System.out.println("Move Left");
 		char direction;
@@ -561,6 +650,7 @@ class buttonListener extends JFrame implements MouseListener{
 						currSize++;
 					}
 			}
+				moves.addMove();
 			}
 			else{
 				System.out.println("Blocks are in the way of this move");
@@ -585,6 +675,7 @@ class buttonListener extends JFrame implements MouseListener{
 		// TODO Auto-generated method stub
 
 
+		//set up MouseEvent to keep track of the last two clicks
 		MouseEvent[] currEvents;
 
 		mouseEvents.setTwoEvents(e);
@@ -594,24 +685,22 @@ class buttonListener extends JFrame implements MouseListener{
 			button currButton = (button)currEvents[0].getSource();
 			
 		}
-		else if(mouseEvents.getCurrentClick() == 0){
+		else if(mouseEvents.getCurrentClick() == 0){//on second click
 			currEvents=mouseEvents.getTwoEvents();
-			button currButton1 = (button)currEvents[0].getSource();
+			button currButton1 = (button)currEvents[0].getSource();//get clicked buttons
 			button currButton2 = (button)currEvents[1].getSource();
 
 			if(currButton2.getBlock() != -1){
 			System.out.println("You can't move a block if another block is in that location");	
-			}
+			}//can't move to an occupied square
 			else{
 				
 				int changeRow=currButton2.getRow()-currButton1.getRow();
 				int changeColumn=currButton2.getColumn()-currButton1.getColumn();
 				
-				
+				//determine the direction the block should move
 				if(changeRow > 0){
 					moveDown(currButton1, currButton2);
-					
-					
 				}
 				else if(changeRow < 0){
 					moveUp(currButton1, currButton2);
@@ -626,6 +715,8 @@ class buttonListener extends JFrame implements MouseListener{
 					System.out.println("Not moving");
 				}
 				
+				currMoves.setText(Integer.toString(moves.getMoves()));
+				//check if level is complete, if so:
 				if(buttonArray[0][5].getBlock() == 0 ||
 					buttonArray[1][5].getBlock() == 0 ||
 					buttonArray[2][5].getBlock() == 0 ||
@@ -635,8 +726,89 @@ class buttonListener extends JFrame implements MouseListener{
 						System.out.println("Move to the next level");
 						int currentLevel=currBoard.getLevel();
 						System.out.println("Level:"+currBoard.getLevel());
+						currBoard.setFinished();
+						
+						//check high scores to see if a new score has been set
+						//if so,  re-write that file to indicate the new score
+						int currentHighScore;
+				currentHighScore=(Character.getNumericValue(scoreArr[currentLevel][3])*10)+
+								(Character.getNumericValue(scoreArr[currentLevel][4]));
+						if(moves.getMoves() < currentHighScore){
+							System.out.println("Top score was: "+currentHighScore);
+							System.out.println("User score is lower");
+							int userScore=moves.getMoves();
+							int firstNum=userScore/10;
+							int secondNum=userScore%10;
+							String tNum1=Integer.toString(firstNum);
+							String tNum2=Integer.toString(secondNum);
+							System.out.println("Moves "+tNum1+","+tNum2);
+							char fNum=tNum1.charAt(0);
+							char sNum=tNum2.charAt(0);
+							System.out.println("Moves "+fNum+","+sNum);
+							scoreArr[currentLevel][3]=fNum;
+							scoreArr[currentLevel][4]=sNum;
+							
+							File outFile = new File("scores.data");
+							try(PrintStream out = new PrintStream(outFile)){
+								for(int a=0; a<12; a++){
+									for(int b=0; b<6; b++){
+										out.print(scoreArr[a][b]);
+										
+									}
+								}
+								
+								out.close();
+							}
+							catch(IOException r) {
+								System.out.println(r);
+					          }
+
+						}
+						
+						moves.setMovesZero();
+						currMoves.setText("0");
+						
+						//the scores file must be re-read to check  for any 
+						//score differences
+						File scoreFile = new File("scores.data");
+						try(FileInputStream fis = new FileInputStream(scoreFile)){
+							System.out.println("Scoreboard file read.");
+							
+									int currentChar;
+									int rowIter=0;
+									int colIter=0;
+									while((currentChar = fis.read()) != -1){ 
+									
+									scoreArr[rowIter][colIter]=(char)currentChar;
+									
+									colIter++;
+									if(colIter==6){
+										rowIter++;
+										colIter=0;
+									}
+										
+									}
+							
+							}
+						catch(IOException q){
+							System.out.println(q);
+							System.out.println("Scoreboard file read failed.");
+							}
+						
+						if(currentLevel < 12){
+						bestScore.setText(Character.toString(scoreArr[currentLevel+1][3])+
+								Character.toString(scoreArr[currentLevel+1][4]));
+						
+						//remove the last level
 						gamePanel.remove(boards[currentLevel]);
-						System.out.println(boards[1].getLevel());
+					
+						//set the next level
+						gamePanel.add(boards[currentLevel+1]);
+						}
+						
+						
+						
+						
 					}
 				
 				
@@ -676,6 +848,26 @@ class buttonListener extends JFrame implements MouseListener{
 
 }
 
+//this class keeps track of the number of moves in a particular level
+class moveKeeper{
+	
+	private int moves=0; 
+	
+	public void addMove(){
+		moves++;
+	}
+	
+	public int getMoves(){
+		return moves;
+	}
+	
+	public void setMovesZero(){
+		moves=0;
+	}
+	
+}
+
+//this class checks to make sure that the level files are valid
 class fileSetup{
 
 	public static File[] setFiles(){
